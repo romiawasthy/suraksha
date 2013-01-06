@@ -15,27 +15,21 @@
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
-		<sec:global-method-security    secured-annotations="enabled" pre-post-annotations="enabled"/>
 	<context:component-scan base-package="com.romi.suraksha" />	
 	<mvc:annotation-driven />
     <beans:bean
 		class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 	
-
-	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
-		up static resources in the ${webappRoot}/resources directory -->
-	<mvc:resources mapping="/resources/**" location="/resources/" />
-
-<!-- 	<beans:bean
+ 	<!-- <beans:bean
 		class="com.romi.suraksha.view.StreamingViewResolver">
 		<beans:property name="order" value="0" />
 		<beans:property name="viewMapping">
 		<beans:map>
-		<beans:entry key="/myintegratedapp" value="http://romiawasthy.blogspot.com"/></beans:map>
+		<beans:entry key="/myintegratedapp" value="http://localhost:8983/solr/"/></beans:map>
 		</beans:property>
 		<beans:property name="viewClass" value="com.romi.suraksha.view.StreamingView"></beans:property>
 		
-	</beans:bean> -->
+	</beans:bean>  -->
 
 	<beans:bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">

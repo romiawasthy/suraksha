@@ -11,12 +11,15 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.filter.GenericFilterBean;
@@ -45,10 +48,59 @@ public class ProxyRequestFilter extends GenericFilterBean {
 
 		
 		String pathIn = ((HttpServletRequest)req).getRequestURI();
+		String referer = ((HttpServletRequest)req).getHeader("Referer");
+		String protectedResource = "";
+		String additionalpath = "";
+		String accessURL = StringUtils.substringAfter(pathIn, "/wrs/");
+		HttpSession session = ((HttpServletRequest)req).getSession();
+		
+		if (referer != null)
+		{
+			session.setAttribute("httpReferer", referer);
+		
+		}else if(session.getAttribute("httpReferer") != null)
+		{
+			referer = (String)session.getAttribute("httpReferer");
+		}
+		else
+		{
+			referer = pathIn;
+		}
+		protectedResource = StringUtils.substringBefore(StringUtils.substringAfter(referer, "/wrs/"), "/");
+		String refererAdditionalPath = StringUtils.substringAfter(StringUtils.substringAfter(referer, "/wrs/"),protectedResource);
+		additionalpath = StringUtils.substringAfter(StringUtils.substringAfter(pathIn, "/wrs/"),protectedResource);
+		
+		if (StringUtils.contains(additionalpath, refererAdditionalPath))
+		{
+			accessURL = additionalpath ;//+ StringUtils.substringAfter(pathIn,"/wrs/" + protectedResource ) ;
+		
+		}else
+		{
+			accessURL = refererAdditionalPath + additionalpath;
+		}
+		
+		
 
-		if (configuration.containsKey(pathIn)) {
+		if (configuration.containsKey(protectedResource)) {
+			
+			
+			String resourceUrl =configuration.get(protectedResource);
+			resourceUrl = resourceUrl + accessURL;
+			
+			
+			
 			URL proxySite = new URL(URLDecoder.decode(
-					configuration.get(pathIn), "utf-8"));
+					//configuration.get(pathIn) , "utf-8"));
+					resourceUrl,"utf-8"));
+			
+			if (StringUtils.contains(resourceUrl, ".")){
+				
+				MimetypesFileTypeMap mimeType = new MimetypesFileTypeMap();
+				
+				String contentType = mimeType.getContentType(resourceUrl);
+				
+				response.setContentType(contentType);
+			}
 			
 			
 
@@ -64,7 +116,7 @@ public class ProxyRequestFilter extends GenericFilterBean {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e) {
-				throw new RuntimeException("Could not invoke requested URL");
+				throw new RuntimeException("Could not invoke requested URL" +resourceUrl );
 			}
 
 		}

@@ -22,7 +22,7 @@ public class StreamingView extends AbstractUrlBasedView {
 	protected void renderMergedOutputModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		URL dfile = new URL(URLDecoder.decode(getUrl(), "utf-8"));
+		URL dfile = new URL(URLDecoder.decode("http://localhost:8983/solr", "utf-8"));
 		
 		try {
 			
