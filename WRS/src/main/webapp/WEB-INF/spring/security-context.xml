@@ -46,7 +46,8 @@
 <beans:bean id="proxyfilter" class="com.romi.suraksha.security.filters.ProxyRequestFilter">
 <beans:property name="configuration">
 <beans:map><beans:entry key="romisblog" value="http://romiawasthy.blogspot.com"/>
-<beans:entry key="romissolr" value="http://localhost:8983"/></beans:map>
+<beans:entry key="romissolr" value="http://localhost:8983"/>
+<beans:entry key="imchome" value="http://localhost:8080/imchome"/></beans:map>
 </beans:property>
 	</beans:bean>
 
